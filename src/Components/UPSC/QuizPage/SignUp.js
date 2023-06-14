@@ -1,0 +1,99 @@
+import React, { Component } from 'react';
+import axios from 'axios';  // Using axios for HTTP requests
+
+class QuizPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            questions: [],
+            currentQuestion: null,
+            currentIndex: 0,
+            studentId: null,
+            answers: {}
+        };
+    }
+
+    componentDidMount() {
+        this.getQuestions();
+    }
+
+    getQuestions = () => {
+        // Here you would perform the ajax request to get questions
+        // For now, we'll just assume you've got them somehow.
+        let questions = []; // replace this with your fetched questions
+        this.setState({
+            questions,
+            currentQuestion: questions[0]
+        });
+    }
+
+    storeAnswer = (questionId, answerId) => {
+        // Here you would perform the ajax request to store answer
+        // For now, we'll just update the state
+        this.setState(prevState => ({
+            answers: {
+                ...prevState.answers,
+                [questionId]: answerId
+            }
+        }));
+    }
+
+    saveQuiz = () => {
+        // Here you would perform the ajax request to save the quiz
+    }
+
+    nextQuestion = () => {
+        // Here you would perform the ajax request to get next question
+        // For now, we'll just increment the index
+        let newIndex = this.state.currentIndex + 1;
+        this.setState({
+            currentIndex: newIndex,
+            currentQuestion: this.state.questions[newIndex]
+        });
+    }
+
+    prevQuestion = () => {
+        // Here you would perform the ajax request to get previous question
+        // For now, we'll just decrement the index
+        let newIndex = this.state.currentIndex - 1;
+        this.setState({
+            currentIndex: newIndex,
+            currentQuestion: this.state.questions[newIndex]
+        });
+    }
+
+    render() {
+        let { currentQuestion, currentIndex, questions } = this.state;
+
+        if (!currentQuestion) {
+            return <div>Loading...</div>;
+        }
+
+        return (
+            <div>
+                <div>Question {currentIndex + 1} out of {questions.length}</div>
+                <div>{currentQuestion.text}</div>
+                <div>
+                    {currentQuestion.choices.map(choice => (
+                        <div key={choice.id}>
+                            <input
+                                type="radio"
+                                id={choice.id}
+                                checked={this.state.answers[currentQuestion.id] === choice.id}
+                                onChange={() => this.storeAnswer(currentQuestion.id, choice.id)}
+                            />
+                            <label htmlFor={choice.id}>{choice.text}</label>
+                        </div>
+                    ))}
+                </div>
+                <div>
+                    <button disabled={currentIndex === 0} onClick={this.prevQuestion}>Previous</button>
+                    <button disabled={currentIndex === questions.length - 1} onClick={this.nextQuestion}>Next</button>
+                </div>
+                <button onClick={this.saveQuiz}>Finish Test</button>
+            </div>
+        );
+    }
+}
+
+export default Quiz;
